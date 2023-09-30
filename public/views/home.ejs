@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 mt-5">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h1>Home</h1>
+                        
+                        <% if (user) { %>
+                            <p>Welcome, <%= user.email %></p>
+                        <% } else { %>
+                            <p>User not logged in</p>
+                        <% } %>
+
+                        <div class="form-group mt-3">
+                            <select class="form-control" id="emailSelect">
+                                <option disabled selected value="">Mesaj göndermek istediğiniz kişiyi seçiniz...</option>
+                                <% users.forEach(otherUser => { %>
+                                    <% if (otherUser.email !== user.email) { %>
+                                        <option><%= otherUser.email %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <textarea style="resize: none;" class="form-control" id="messageInput" rows="3" placeholder="Enter your message..."></textarea>
+                        </div>
+                        <a href="/" class="btn btn-danger mt-3">Çıkış</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
