@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-# Chatting
 
-=======
 # Chatting
 
 ```
@@ -51,4 +48,3 @@
     </script>
 ```
 * C:\Program Files\MongoDB\Server\7.0\bin\mongod.cfg
->>>>>>> 5b7a52b069b4e50fca6303990a0609b7932ba3e7
