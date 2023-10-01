@@ -49,5 +49,13 @@
     app.post('/sendMessage', (req, res) => {
     res.json({});
     });
+
+
+
+
+
+
+
+****data.messages.reverse(); // mongodb en son gelen mesajı en üstte yazdırma
 ```
 * C:\Program Files\MongoDB\Server\7.0\bin\mongod.cfg
