@@ -10,15 +10,15 @@
 
 <body class="bg-light">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 mt-5">
-                <div class="card text-center">
+        <div class="row justify-content-center p-5">
+            <div class="row justify-content-center col-md-15">
+                <div class=" col-md-8 card text-center">
                     <div class="card-body">
                         <h1>HOŞ GELDİN</h1>
                         <% if (user) { %>
                             <p>
-                                <%= user.name %>
-                                    <%= user.surname %>
+                                <%= user.name.toUpperCase() %>
+                                    <%= user.surname.toUpperCase() %>
                             </p>
                             <p>
                                 <%= user.email %>
@@ -30,94 +30,113 @@
                                     <a href="#" id="updateInfo" class="btn btn-secondary">Bilgilerimi Güncelle</a>
                     </div>
                 </div>
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <form id="messageForm" action="/sendMessage" method="post">
-                            <div class="form-group mt-3">
-                                <select class="form-control" id="emailSelect">
-                                    <option disabled selected value="">Mesaj göndermek istediğiniz kişiyi seçiniz...
-                                    </option>
-                                    <% users.forEach(otherUser=> { %>
-                                        <% if (otherUser.email !==user.email) { %>
-                                            <option>
-                                                <%= otherUser.email %>
-                                            </option>
-                                            <% } %>
-                                                <% }); %>
-                                </select>
-                            </div>
 
-                            <div class="form-group mt-3">
-                                <textarea style="resize: none;" class="form-control" id="messageInput" rows="3"
-                                    placeholder="Enter your message..."></textarea>
-                            </div>
-                            <button onclick="sendMessage()" id="sendButton" type="button"
-                                class="btn btn-primary mt-3">Mesajı
-                                Gönder</button>
-
-                            <p id="feedbackMessage" style="margin-top: 20px; color:green"></p>
-
-                        </form>
-
-
-                    </div>
-                </div>
-
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <form id="lookMessage" action="/lookMessage" method="post">
-                            <div class="form-group mt-3">
-                                <select onchange="lookMessage()" class="form-control" id="emailSelect2">
-                                    <option disabled selected value="">Mesajlarına bakmak istediğiniz kişiyi seçiniz...
-                                    </option>
-                                    <% users.forEach(otherUser=> { %>
-                                        <% if (otherUser.email !==user.email) { %>
-                                            <option>
-                                                <%= otherUser.email %>
-                                            </option>
-                                            <% } %>
-                                                <% }); %>
-                                </select>
-                                <p id="feedbackMessage2" style="margin-top: 20px;"></p>
-                            </div>
-                            <div id="messageList" class="mt-3">
-                                <% if (typeof messages !=='undefined' && messages.length> 0) { %>
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5 class="card-title">Gelen Mesajlar</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <ul class="list-group list-group-flush">
-                                                <% messages.forEach(message=> { %>
-                                                    <li class="list-group-item">
-                                                        <strong>
-                                                            <%= message.sender %>:
-                                                        </strong>
-                                                        <%= message.content %>
-                                                    </li>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card p-3 mt-3">
+                            <form id="messageForm" action="/sendMessage" method="post">
+                                <div class="form-group mt-3">
+                                    <select required class="form-control" id="emailSelect">
+                                        <option disabled selected value="">Mesaj göndermek istediğiniz kişiyi seçiniz...
+                                        </option>
+                                        <% users.forEach(otherUser=> { %>
+                                            <% if (otherUser.email !==user.email) { %>
+                                                <option>
+                                                    <%= otherUser.email %>
+                                                </option>
+                                                <% } %>
                                                     <% }); %>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <% } else { %>
-                                        <p>Henüz mesajınız bulunmamaktadır.</p>
-                                        <% } %>
-                            </div>
-                        </form>
+                                    </select>
+                                </div>
+
+                                <div class="form-group mt-3">
+                                    <textarea style="resize: none;" class="form-control" id="messageInput"
+                                        maxlength="100" rows="3" placeholder="Enter your message..."
+                                        oninput="updateCharacterCount()"></textarea>
+                                    <p id="characterCount" style="text-align: right; color: #000000; margin-top: 5px;">
+                                        100/100</p>
+                                </div>
+
+                                <button onclick="sendMessage()" id="sendButton" type="button"
+                                    class="btn btn-primary">Mesajı Gönder</button>
+
+                                <p id="feedbackMessage" style="margin-top: 20px;"></p>
+                                <div id="sentMessageList" class="mt-3"></div>
+
+                                <script>
+                                    function updateCharacterCount() {
+                                        var messageInput = document.getElementById("messageInput");
+                                        var characterCount = document.getElementById("characterCount");
+                                        var remainingCharacters = messageInput.maxLength - messageInput.value.length;
+                                
+                                        characterCount.textContent = remainingCharacters + "/100";
+                                
+                                        
+                                        if ( remainingCharacters === 100)
+                                        {
+                                            characterCount.style.color = 'black';
+                                        }
+                                        else if (remainingCharacters > 0 && remainingCharacters < 100) {
+                                            characterCount.style.color = '#888';
+                                        }
+                                        else if ( remainingCharacters === 0) {
+                                            characterCount.style.color = 'red';
+                                        }
+                                    }
+                                </script>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card p-3 mt-3">
+                            <form id="lookMessage" action="/lookMessage" method="post">
+                                <div class="form-group mt-3">
+                                    <select onchange="lookMessage()" class="form-control" id="emailSelect2">
+                                        <option disabled selected value="">Mesajlarına bakmak istediğiniz kişiyi
+                                            seçiniz...
+                                        </option>
+                                        <% users.forEach(otherUser=> { %>
+                                            <% if (otherUser.email !==user.email) { %>
+                                                <option>
+                                                    <%= otherUser.email %>
+                                                </option>
+                                                <% } %>
+                                                    <% }); %>
+                                    </select>
+                                    <p id="feedbackMessage2" style="margin-top: 20px;"></p>
+                                </div>
+                                <div id="lookMessageList" class="mt-3">
+
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
+
+
     <script>
+
         function sendMessage() {
+            var selectedEmail = document.getElementById("emailSelect").value;
+            var selectedMessage = document.getElementById("messageInput").value;
+
+            if (selectedEmail === "" || selectedMessage === "") {
+                document.getElementById("feedbackMessage").innerText = 'Lütfen alanları boş bırakmayın.';
+                document.getElementById("feedbackMessage").style.color = 'red';
+                setTimeout(function () {
+                        document.getElementById("feedbackMessage").innerText = '';
+                    }, 2000);
+                return;
+            }
 
             document.getElementById("sendButton").disabled = true;
             document.getElementById("messageInput").disabled = true;
             document.getElementById("emailSelect").disabled = true;
-
 
             var countDown = 5;
             var countDownInterval = setInterval(function () {
@@ -133,6 +152,14 @@
                     document.getElementById("emailSelect").disabled = false;
 
                     document.getElementById("feedbackMessage").innerText = 'Mesaj gönderildi!';
+                    document.getElementById("feedbackMessage").style.color = 'green';
+
+
+                    var characterCount = document.getElementById("characterCount");
+                    document.getElementById("emailSelect").selectedIndex = 0;
+                    document.getElementById("messageInput").value = "";
+                    characterCount.textContent = "100/100";
+                    characterCount.style.color = 'black';
 
                     setTimeout(function () {
                         document.getElementById("feedbackMessage").innerText = '';
@@ -140,8 +167,6 @@
                 }
             }, 1000);
 
-            var selectedEmail = document.getElementById("emailSelect").value;
-            var selectedMessage = document.getElementById("messageInput").value;
             var userLoggedInEmail = "<%= user ? user.email : '' %>";
 
             var messageData = {
@@ -156,29 +181,28 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(messageData),
-
             })
                 .then(response => response.json())
-
                 .catch((error) => {
                     console.error('Error:', error);
                     clearInterval(countDownInterval);
                     document.getElementById("sendButton").innerText = 'Mesaj Gönder';
-
                     document.getElementById("sendButton").disabled = false;
                 });
         }
 
-        var messageList = document.getElementById("messageList");
+        var lookMessageList = document.getElementById("lookMessageList");
 
         function lookMessage() {
             var loggedInUserEmail = "<%= user ? user.email : '' %>";
 
             var selectedEmail2 = document.getElementById("emailSelect2").value;
 
+
             var messageData2 = {
                 selectedEmail2: selectedEmail2,
-                loggedInUserEmail: loggedInUserEmail
+                loggedInUserEmail: loggedInUserEmail,
+
             };
 
             fetch('/lookMessage', {
@@ -191,15 +215,17 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.messages && data.messages.length > 0) {
-                        messageList.innerHTML = '<h5 class="mb-3">Gelen Mesajlar</h5>';
+
+
+                        lookMessageList.innerHTML = `<h5 class="mb-3"> Gönderen: ${data.name} ${data.surname}</h5>`
 
                         data.messages.reverse();
 
                         data.messages.forEach(message => {
-                            messageList.innerHTML += `
+                            lookMessageList.innerHTML += `
+                            
             <div class="card mb-3">
                 <div class="card-header">
-                    <strong>Gönderen:</strong> ${message.sender}
                     <span class="float-right"><strong>Tarih:</strong> ${new Date(message.timestamp).toLocaleString()}</span>
                 </div>
                 <div class="card-body">
@@ -209,7 +235,7 @@
         `;
                         });
                     } else {
-                        messageList.innerHTML = '<p>Henüz mesajınız bulunmamaktadır.</p>';
+                        lookMessageList.innerHTML = '<p>Bu kişiden mesaj almadınız.</p>';
                     }
                 })
                 .catch((error) => {

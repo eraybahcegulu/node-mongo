@@ -137,7 +137,7 @@ app.post('/sendMessage', (req, res) => {
 });
 
 
-const getMessages = async (loggedInUserEmail, selectedEmail) => {
+const getMessages = async (loggedInUserEmail, selectedEmail,) => {
     try {
 
         const loggedInUser = await User.findOne({ email: loggedInUserEmail });
@@ -146,7 +146,7 @@ const getMessages = async (loggedInUserEmail, selectedEmail) => {
             return [];
         }
         const loggedInUserMessages = loggedInUser.messages;
-
+        
 
         const selectedUser = await User.findOne({ email: selectedEmail });
         if (!selectedUser) {
@@ -157,22 +157,51 @@ const getMessages = async (loggedInUserEmail, selectedEmail) => {
         const receivedMessages = loggedInUserMessages.filter(message => message.sender === selectedEmail);
 
         console.log('Received Messages:', receivedMessages);
-
         return receivedMessages;
+
+        
     } catch (error) {
         console.error('Hata:', error.message);
         return [];
     }
 };
 
+const getName = async (selectedEmail) => {
+    const selectedUser = await User.findOne({ email: selectedEmail });
+    if (!selectedUser) {
+        console.log('Seçilen kullanıcı bulunamadı.');
+        return [];
+    }
+    const selectedUserName= selectedUser.name;
+
+    
+    return selectedUserName;
+}
+
+const getSurName = async (selectedEmail) => {
+    const selectedUser = await User.findOne({ email: selectedEmail });
+    if (!selectedUser) {
+        console.log('Seçilen kullanıcı bulunamadı.');
+        return [];
+    }
+
+    const selectedUserSurName= selectedUser.surname;
+    
+    return selectedUserSurName;
+}
+
 app.post('/lookMessage', async (req, res) => {
     try {
         const loggedInUserEmail = req.body.loggedInUserEmail;
         const selectedEmail = req.body.selectedEmail2;
+
         console.log('loggedInUserEmail:', loggedInUserEmail);
         console.log('selectedEmail:', selectedEmail);
-        const messages = await getMessages(loggedInUserEmail, selectedEmail);
-        res.json({ messages });
+        const messages = await getMessages(loggedInUserEmail, selectedEmail,);
+        const name = await getName(selectedEmail);
+        const surname = await getSurName(selectedEmail);
+
+        res.json({ messages , name, surname });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
