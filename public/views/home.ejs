@@ -26,8 +26,8 @@
                             <% } else { %>
                                 <p>User not logged in</p>
                                 <% } %>
-                                    <a href="/" class="btn btn-danger">Çıkış</a>
-                                    <a href="#" class="btn btn-secondary">Bilgilerimi Güncelle</a>
+                                    <a href="/" id="buttonExit" class="btn btn-danger">Çıkış</a>
+                                    <a href="#" id="updateInfo" class="btn btn-secondary">Bilgilerimi Güncelle</a>
                     </div>
                 </div>
                 <div class="card mt-3">
@@ -51,10 +51,11 @@
                                 <textarea style="resize: none;" class="form-control" id="messageInput" rows="3"
                                     placeholder="Enter your message..."></textarea>
                             </div>
-                            <button type="button" class="btn btn-primary mt-3" onclick="sendMessage()">Mesajı
+                            <button onclick="sendMessage()" id="sendButton" type="button"
+                                class="btn btn-primary mt-3">Mesajı
                                 Gönder</button>
 
-                            <p id="feedbackMessage" style="margin-top: 20px;"></p>
+                            <p id="feedbackMessage" style="margin-top: 20px; color:green"></p>
 
                         </form>
 
@@ -66,16 +67,41 @@
                     <div class="card-body">
                         <form id="lookMessage" action="/lookMessage" method="post">
                             <div class="form-group mt-3">
-                                <select class="form-control" id="secondEmailSelect">
-                                    <option disabled selected value="">Son mesajına bakmak istediğiniz kişiyi seçiniz...
+                                <select onchange="lookMessage()" class="form-control" id="emailSelect2">
+                                    <option disabled selected value="">Mesajlarına bakmak istediğiniz kişiyi seçiniz...
                                     </option>
-
+                                    <% users.forEach(otherUser=> { %>
+                                        <% if (otherUser.email !==user.email) { %>
+                                            <option>
+                                                <%= otherUser.email %>
+                                            </option>
+                                            <% } %>
+                                                <% }); %>
                                 </select>
+                                <p id="feedbackMessage2" style="margin-top: 20px;"></p>
                             </div>
-
-                            <div class="form-group mt-3">
-                                <textarea readonly style="resize: none;" class="form-control" id="messageInput"
-                                    rows="3"></textarea>
+                            <div id="messageList" class="mt-3">
+                                <% if (typeof messages !=='undefined' && messages.length> 0) { %>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="card-title">Gelen Mesajlar</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-group list-group-flush">
+                                                <% messages.forEach(message=> { %>
+                                                    <li class="list-group-item">
+                                                        <strong>
+                                                            <%= message.sender %>:
+                                                        </strong>
+                                                        <%= message.content %>
+                                                    </li>
+                                                    <% }); %>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                        <p>Henüz mesajınız bulunmamaktadır.</p>
+                                        <% } %>
                             </div>
                         </form>
                     </div>
@@ -88,10 +114,35 @@
     <script>
         function sendMessage() {
 
+            document.getElementById("sendButton").disabled = true;
+            document.getElementById("messageInput").disabled = true;
+            document.getElementById("emailSelect").disabled = true;
+
+
+            var countDown = 5;
+            var countDownInterval = setInterval(function () {
+                document.getElementById("sendButton").innerText = 'Gönderiliyor... ' + countDown + ' saniye';
+                countDown--;
+
+                if (countDown < 0) {
+                    clearInterval(countDownInterval);
+                    document.getElementById("sendButton").innerText = 'Mesaj Gönder';
+
+                    document.getElementById("sendButton").disabled = false;
+                    document.getElementById("messageInput").disabled = false;
+                    document.getElementById("emailSelect").disabled = false;
+
+                    document.getElementById("feedbackMessage").innerText = 'Mesaj gönderildi!';
+
+                    setTimeout(function () {
+                        document.getElementById("feedbackMessage").innerText = '';
+                    }, 2000);
+                }
+            }, 1000);
+
             var selectedEmail = document.getElementById("emailSelect").value;
             var selectedMessage = document.getElementById("messageInput").value;
             var userLoggedInEmail = "<%= user ? user.email : '' %>";
-
 
             var messageData = {
                 selectedEmail: selectedEmail,
@@ -105,11 +156,61 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(messageData),
+
+            })
+                .then(response => response.json())
+
+                .catch((error) => {
+                    console.error('Error:', error);
+                    clearInterval(countDownInterval);
+                    document.getElementById("sendButton").innerText = 'Mesaj Gönder';
+
+                    document.getElementById("sendButton").disabled = false;
+                });
+        }
+
+        var messageList = document.getElementById("messageList");
+
+        function lookMessage() {
+            var loggedInUserEmail = "<%= user ? user.email : '' %>";
+
+            var selectedEmail2 = document.getElementById("emailSelect2").value;
+
+            var messageData2 = {
+                selectedEmail2: selectedEmail2,
+                loggedInUserEmail: loggedInUserEmail
+            };
+
+            fetch('/lookMessage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messageData2),
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Success:', data);
-                    document.getElementById("feedbackMessage").innerText = 'Mesaj gönderildi!';
+                    if (data.messages && data.messages.length > 0) {
+                        messageList.innerHTML = '<h5 class="mb-3">Gelen Mesajlar</h5>';
+
+                        data.messages.reverse();
+
+                        data.messages.forEach(message => {
+                            messageList.innerHTML += `
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>Gönderen:</strong> ${message.sender}
+                    <span class="float-right"><strong>Tarih:</strong> ${new Date(message.timestamp).toLocaleString()}</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">${message.content}</p>
+                </div>
+            </div>
+        `;
+                        });
+                    } else {
+                        messageList.innerHTML = '<p>Henüz mesajınız bulunmamaktadır.</p>';
+                    }
                 })
                 .catch((error) => {
                     console.error('Error:', error);

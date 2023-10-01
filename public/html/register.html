@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link href="bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-light">
     <div class="container">
         <div class="row justify-content-center">
@@ -16,20 +18,22 @@
                         <form id="registerForm" action="/register" method="post">
                             <div class="mb-3">
                                 <label for="nameRegister" class="form-label">Name:</label>
-                                <input type="text" class="form-control" id="nameRegister" name="name" required>
+                                <input type="text" class="form-control" id="nameRegister" name="name" maxlength="25"
+                                    required>
                             </div>
                             <div class="mb-3">
                                 <label for="surnameRegister" class="form-label">Surname:</label>
-                                <input type="text" class="form-control" id="surnameRegister" name="surname" required>
+                                <input type="text" class="form-control" id="surnameRegister" name="surname" maxlength="25" required>
                             </div>
                             <div class="mb-3">
                                 <label for="emailRegister" class="form-label">Email:</label>
-                                <input type="email" class="form-control" id="emailRegister" name="email" required>
+                                <input type="email" class="form-control" id="emailRegister" name="email" maxlength="35" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="passwordRegister" class="form-label">Password:</label>
-                                <input type="password" class="form-control" id="passwordRegister" name="password" required>
+                                <input type="password" class="form-control" id="passwordRegister"maxlength="25" name="password"
+                                    required>
                             </div>
                             <button type="submit" class="btn btn-primary">Register</button>
                             <a href="/" class="btn btn-primary">Go to Login</a>
@@ -39,5 +43,46 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var nameInput = document.getElementById("nameRegister");
+
+            nameInput.addEventListener("input", function () {
+                nameInput.value = nameInput.value.replace(/[^a-zA-ZğĞıİöÖçÇşŞüÜ]/g, '');
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var nameInput = document.getElementById("surnameRegister");
+
+            nameInput.addEventListener("input", function () {
+                nameInput.value = nameInput.value.replace(/[^a-zA-ZğĞıİöÖçÇşŞüÜ]/g, '');
+            });
+        });
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var passwordInput = document.getElementById("passwordRegister");
+
+        passwordInput.addEventListener("input", function () {
+            passwordInput.value = passwordInput.value.replace(/\s/g, '');
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var passwordInput = document.getElementById("emailRegister");
+
+        passwordInput.addEventListener("input", function () {
+            passwordInput.value = passwordInput.value.replace(/\s/g, '');
+        });
+    });
+</script>
 </body>
+
 </html>

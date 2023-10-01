@@ -15,15 +15,15 @@
                 <div class="card">
                     <div class="card-body">
                         <h1 class="text-center">Login</h1>
-                        <form id="loginForm" action="/" method="post">
+                        <form id="loginForm" action="/home" method="post">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email:</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="email" class="form-control" id="email" name="email" maxlength="35" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password:</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password" maxlength="25" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Login</button>
                             <a href="/register" class="btn btn-primary">Go to Register</a>
@@ -44,6 +44,26 @@
                 window.location.href = "/";
             }
         };
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var passwordInput = document.getElementById("email");
+    
+        passwordInput.addEventListener("input", function () {
+            passwordInput.value = passwordInput.value.replace(/\s/g, '');
+        });
+    });
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var passwordInput = document.getElementById("password");
+    
+        passwordInput.addEventListener("input", function () {
+            passwordInput.value = passwordInput.value.replace(/\s/g, '');
+        });
+    });
     </script>
 
 </body>
