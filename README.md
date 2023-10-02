@@ -60,3 +60,5 @@
 ****data.messages.reverse(); // mongodb en son gelen mesajı en üstte yazdırma
 ```
 * C:\Program Files\MongoDB\Server\7.0\bin\mongod.cfg
+
+mongodb error code 11000 > duplicate key(_id) success login kontrol
