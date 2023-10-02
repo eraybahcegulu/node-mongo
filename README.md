@@ -61,4 +61,4 @@
 ```
 * C:\Program Files\MongoDB\Server\7.0\bin\mongod.cfg
 
-mongodb error code 11000 > duplicate key(_id) success login kontrol
+* mongodb error code 11000 > duplicate key(_id) success login kontrol
